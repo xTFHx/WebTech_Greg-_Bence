@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Felhasználó adatlap</title>
+
+</head>
+<body>
+
+    <h1>Felhasználó adatlap</h1>
+    <div id="user-container"></div>
+
+
+    <script>
+
+
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get('id');
+
+        const container = document.getElementById('user-container');
+
+        if (!username) {
+            container.innerHTML = "<p>Nincs megadva felhasználónév!</p>";
+        } else {
+            fetch(`https://api.github.com/users/${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayUser(data);
+                })
+                .catch(err => {
+                    container.innerHTML = "<p>Hiba történt az adatok lekérésekor.</p>";
+                });
+        }
+
+        function addField(label, value) {
+            
+            if (value !== null && value !== "") {
+                return `<div class="field"><strong>${label}:</strong> ${value}</div>`;
+            }
+            return "";
+        }
+
+        function displayUser(user) {
+
+            let html = "";
+
+            if (user.avatar_url) {
+                html += `<img src="${user.avatar_url}" alt="avatar">`;
+            }
+
+            html += addField("Név", user.name);
+            html += addField("Blog", user.blog ? `<a href="${user.blog}" target="_blank">${user.blog}</a>` : null);
+            html += addField("Hely", user.location);
+            html += addField("Bio", user.bio);
+            html += addField("Publikus repo", user.public_repos);
+            html += addField("Követők", user.followers);
+
+            container.innerHTML = html;
+        }
+    </script>
+
+</body>
+</html>
