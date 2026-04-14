@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git App - Repository adatlap</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 id="repo-name"></h1>
+    <p id="description"></p>
+    <p>
+        <strong>Homepage:</strong>
+        <a id="homepage"></a>
+    </p>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Fájlok</h2>
+                <table id="file-list">
+                    <tr>
+                        <th>Név</th>
+                        <th>Típus</th>
+                        <th>Méret</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="col">
+                <h2>Legutóbbi hibajegyek</h2>
+                <ul id="issues"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        async function loadRepo(repoName) {
+            try {
+                const res = await fetch('https://api.github.com/repos/' + repoName, {
+                    headers: {
+                        'Authorization': 'Bearer ' + GH_ACCESS_TOKEN
+                    }
+                });
+
+                if (!res.ok) {
+                    throw Error('HTTP státusz: ' + res.status);
+                }
+
+                const data = await res.json();
+
+                const repoNameElem = document.querySelector('#repo-name');
+                repoNameElem.textContent = data.full_name;
+
+                const descElem = document.querySelector('#description');
+                descElem.textContent = data.description;
+
+                const homepageElem = document.querySelector('#homepage');
+                homepageElem.textContent = data.homepage;
+                homepageElem.setAttribute('href', data.homepage);
+            } catch (err) {
+                console.error(err);
+                alert('Hiba az adatbetöltés során: ' + err);
+            }
+        }
+
+        async function loadFileList(repoName) {
+            try {
+                const res = await fetch(`https://api.github.com/repos/${repoName}/contents/`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + GH_ACCESS_TOKEN
+                    }
+                });
+
+                if (!res.ok) {
+                    throw Error('HTTP státusz: ' + res.status);
+                }
+
+                const data = await res.json();
+                
+                const fileTable = document.querySelector('#file-list');
+                for (const file of data) {
+                    const fileHtml = `
+                        <tr>
+                            <td>${file.name}</td>
+                            <td>${file.type}</td>
+                            <td>${file.size} bytes</td>
+                        </tr>
+                    `;
+                    fileTable.innerHTML += fileHtml;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Hiba az adatbetöltés során: ' + err);
+            }
+        }
+
+        async function loadIssues(repoName) {
+            try {
+                const res = await fetch(`https://api.github.com/repos/${repoName}/issues`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + GH_ACCESS_TOKEN
+                    }
+                });
+
+                if (!res.ok) {
+                    throw Error('HTTP státusz: ' + res.status);
+                }
+
+                const data = await res.json();
+                
+                const issuesElem = document.querySelector('#issues');
+                for (const issue of data) {
+                    issuesElem.innerHTML += `<li>${issue.title}</li>`;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Hiba az adatbetöltés során: ' + err);
+            }
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const repoName = params.get('name');
+
+        loadRepo(repoName);
+        loadFileList(repoName);
+        loadIssues(repoName);
+    </script>
+</body>
+</html>
