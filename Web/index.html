@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Taxi Register - IIT Playground</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Taxi Register</h1>
+
+<button id="loadBtn">Autók betöltése</button>
+
+<h2>Autó hozzáadása | szerkesztése</h2>
+
+<img src="pngtree-car-logo-png-image_4558847.png" alt="autóról egy kép">
+
+<form id="carForm">
+
+    <label for="brand">Márka</label>
+    <input type="text" id="brand" placeholder="pl. Ferrari" required>
+
+    <label for="model">Modell</label>
+    <input type="text" id="model" placeholder="pl. F40" required>
+
+    <label for="fuelUse">Üzemanyagfogyasztás</label>
+    <input type="number" id="fuelUse" step="any" min="0" required>
+
+    <label for="dayOfCommission">Forgalomba helyezés dátuma</label>
+    <input type="date" id="dayOfCommission" required>
+
+    <label for="owner">Tulajdonos</label>
+    <input type="text" id="owner" placeholder="pl. Gyro Zeppeli" required>
+
+
+
+
+    <label for="electric">
+        Elektromos
+        <input type="checkbox" id="electric">
+    </label>
+
+    <button type="submit">Mentés</button>
+
+
+
+</form>
+
+<p id="message"></p>
+
+<ul id="carList"></ul>
+
+<script src="script.js"></script>
+</body>
+</html>
